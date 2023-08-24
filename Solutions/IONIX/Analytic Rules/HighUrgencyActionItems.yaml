@@ -1,0 +1,42 @@
+id: b4b44691-0db5-4301-9327-40177bf8f1eb
+name: High Urgency IONIX Action Items
+description: |
+  'This query creates an alert for active IONIX Action Items with high urgency (9-10).
+   Urgency can be altered using the "min_urgency" variable in the query.'
+severity: High
+status: Available
+requiredDataConnectors:
+  - connectorId: IONIXSecurityLogs
+    dataTypes:
+      - IONIXActionItems_CL
+queryFrequency: 1d
+queryPeriod: 14d
+triggerOperator: gt
+triggerThreshold: 0
+tactics:
+  - InitialAccess
+relevantTechniques:
+  - T1190
+  - T1195
+query: |
+  let timeframe = 14d;
+  let time_generated_bucket = 1h;
+  let min_urgency = 9;
+  let maxTimeGeneratedBucket = toscalar(
+     IONIXActionItems_CL
+     | where TimeGenerated > ago(timeframe)
+     | summarize max(bin(TimeGenerated, time_generated_bucket))
+     );
+  IONIXActionItems_CL
+   | where TimeGenerated > ago(timeframe) and is_open_b == true
+   | where bin(TimeGenerated, time_generated_bucket) == maxTimeGeneratedBucket
+   | where urgency_d >= min_urgency
+   | extend timestamp = opening_datetime_t
+   | extend DNSCustomEntity = host_s
+entityMappings:
+  - entityType: DNS
+    fieldMappings:
+      - identifier: DomainName
+        columnName: DNSCustomEntity
+version: 1.0.0
+kind: Scheduled
