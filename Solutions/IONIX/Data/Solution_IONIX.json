@@ -6,7 +6,7 @@
   "Data Connectors": [
     "Data Connectors/IONIXSecurityLogs.json"
   ],
-  "Analytic Rules": [S
+  "Analytic Rules": [
     "Analytic Rules/HighUrgencyActionItems.yaml"
   ],
   "Workbooks": [
