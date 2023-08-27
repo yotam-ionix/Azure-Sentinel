@@ -104,25 +104,34 @@
                       "metricName": "Total data received",
                       "legend": "IONIXActionItems_CL",
                       "baseQuery": "IONIXActionItems_CL"
+                    },
+                    {
+                      "metricName": "Total data received",
+                      "legend": "CyberpionActionItems_CL",
+                      "baseQuery": "CyberpionActionItems_CL"
                     }
                   ],
                   "sampleQueries": [
                     {
                       "description": "Fetch latest Action Items that are currently open",
-                      "query": "let lookbackTime = 14d;\nlet maxTimeGeneratedBucket = toscalar(\n   IONIXActionItems_CL \n   | where TimeGenerated > ago(lookbackTime)\n   | summarize max(bin(TimeGenerated, 1h))\n   );\nIONIXActionItems_CL\n | where TimeGenerated > ago(lookbackTime) and is_open_b == true\n | where bin(TimeGenerated, 1h) == maxTimeGeneratedBucket\n "
+                      "query": "let IONIXTables = union isfuzzy=true IONIXActionItems_CL, CyberpionActionItems_CL;\nlet lookbackTime = 14d;\nlet maxTimeGeneratedBucket = toscalar(\n    IONIXTables\n    | where TimeGenerated > ago(lookbackTime)\n    | summarize max(bin(TimeGenerated, 1h))\n    );\nIONIXTables\n| where TimeGenerated > ago(lookbackTime) and is_open_b == true\n| where bin(TimeGenerated, 1h) == maxTimeGeneratedBucket\n"
                     }
                   ],
                   "dataTypes": [
                     {
                       "name": "IONIXActionItems_CL",
                       "lastDataReceivedQuery": "IONIXActionItems_CL\n            | summarize Time = max(TimeGenerated)\n            | where isnotempty(Time)"
+                    },
+                    {
+                      "name": "CyberpionActionItems_CL",
+                      "lastDataReceivedQuery": "CyberpionActionItems_CL\n            | summarize Time = max(TimeGenerated)\n            | where isnotempty(Time)"
                     }
                   ],
                   "connectivityCriterias": [
                     {
                       "type": "IsConnectedQuery",
                       "value": [
-                        "IONIXActionItems_CL\n            | summarize LastLogReceived = max(TimeGenerated)\n            | project IsConnected = LastLogReceived > ago(30d)"
+                        "union isfuzzy=true IONIXActionItems_CL, CyberpionActionItems_CL| summarize LastLogReceived = max(TimeGenerated)\n| project IsConnected = LastLogReceived > ago(30d)"
                       ]
                     }
                   ],
@@ -273,26 +282,35 @@
               "metricName": "Total data received",
               "legend": "IONIXActionItems_CL",
               "baseQuery": "IONIXActionItems_CL"
+            },
+            {
+              "metricName": "Total data received",
+              "legend": "CyberpionActionItems_CL",
+              "baseQuery": "CyberpionActionItems_CL"
             }
           ],
           "dataTypes": [
             {
               "name": "IONIXActionItems_CL",
               "lastDataReceivedQuery": "IONIXActionItems_CL\n            | summarize Time = max(TimeGenerated)\n            | where isnotempty(Time)"
+            },
+            {
+              "name": "CyberpionActionItems_CL",
+              "lastDataReceivedQuery": "CyberpionActionItems_CL\n            | summarize Time = max(TimeGenerated)\n            | where isnotempty(Time)"
             }
           ],
           "connectivityCriterias": [
             {
               "type": "IsConnectedQuery",
               "value": [
-                "IONIXActionItems_CL\n            | summarize LastLogReceived = max(TimeGenerated)\n            | project IsConnected = LastLogReceived > ago(30d)"
+                "union isfuzzy=true IONIXActionItems_CL, CyberpionActionItems_CL| summarize LastLogReceived = max(TimeGenerated)\n| project IsConnected = LastLogReceived > ago(30d)"
               ]
             }
           ],
           "sampleQueries": [
             {
               "description": "Fetch latest Action Items that are currently open",
-              "query": "let lookbackTime = 14d;\nlet maxTimeGeneratedBucket = toscalar(\n   IONIXActionItems_CL \n   | where TimeGenerated > ago(lookbackTime)\n   | summarize max(bin(TimeGenerated, 1h))\n   );\nIONIXActionItems_CL\n | where TimeGenerated > ago(lookbackTime) and is_open_b == true\n | where bin(TimeGenerated, 1h) == maxTimeGeneratedBucket\n "
+              "query": "let IONIXTables = union isfuzzy=true IONIXActionItems_CL, CyberpionActionItems_CL;\nlet lookbackTime = 14d;\nlet maxTimeGeneratedBucket = toscalar(\n    IONIXTables\n    | where TimeGenerated > ago(lookbackTime)\n    | summarize max(bin(TimeGenerated, 1h))\n    );\nIONIXTables\n| where TimeGenerated > ago(lookbackTime) and is_open_b == true\n| where bin(TimeGenerated, 1h) == maxTimeGeneratedBucket\n"
             }
           ],
           "availability": {
@@ -384,7 +402,7 @@
                 "description": "This query creates an alert for active IONIX Action Items with high urgency (9-10).\n Urgency can be altered using the \"min_urgency\" variable in the query.",
                 "displayName": "High Urgency IONIX Action Items",
                 "enabled": false,
-                "query": "let timeframe = 14d;\nlet time_generated_bucket = 1h;\nlet min_urgency = 9;\nlet maxTimeGeneratedBucket = toscalar(\n   IONIXActionItems_CL\n   | where TimeGenerated > ago(timeframe)\n   | summarize max(bin(TimeGenerated, time_generated_bucket))\n   );\nIONIXActionItems_CL\n | where TimeGenerated > ago(timeframe) and is_open_b == true\n | where bin(TimeGenerated, time_generated_bucket) == maxTimeGeneratedBucket\n | where urgency_d >= min_urgency\n | extend timestamp = opening_datetime_t\n | extend DNSCustomEntity = host_s\n",
+                "query": "let IONIXTables = union isfuzzy=true IONIXActionItems_CL, CyberpionActionItems_CL;\nlet timeframe = 14d;\nlet time_generated_bucket = 1h;\nlet min_urgency = 9;\nlet maxTimeGeneratedBucket = toscalar(\n   IONIXTables\n   | where TimeGenerated > ago(timeframe)\n   | summarize max(bin(TimeGenerated, time_generated_bucket))\n   );\nIONIXTables\n | where TimeGenerated > ago(timeframe) and is_open_b == true\n | where bin(TimeGenerated, time_generated_bucket) == maxTimeGeneratedBucket\n | where urgency_d >= min_urgency\n | extend timestamp = opening_datetime_t\n | extend DNSCustomEntity = host_s\n",
                 "queryFrequency": "P1D",
                 "queryPeriod": "P14D",
                 "severity": "High",
@@ -395,10 +413,11 @@
                 "status": "Available",
                 "requiredDataConnectors": [
                   {
-                    "connectorId": "IONIXSecurityLogs",
                     "dataTypes": [
-                      "IONIXActionItems_CL"
-                    ]
+                      "IONIXActionItems_CL",
+                      "CyberpionActionItems_CL"
+                    ],
+                    "connectorId": "IONIXSecurityLogs"
                   }
                 ],
                 "tactics": [
@@ -410,13 +429,13 @@
                 ],
                 "entityMappings": [
                   {
-                    "entityType": "DNS",
                     "fieldMappings": [
                       {
                         "identifier": "DomainName",
                         "columnName": "DNSCustomEntity"
                       }
-                    ]
+                    ],
+                    "entityType": "DNS"
                   }
                 ]
               }
@@ -489,7 +508,7 @@
               },
               "properties": {
                 "displayName": "[parameters('workbook1-name')]",
-                "serializedData": "{\"version\":\"Notebook/1.0\",\"items\":[{\"type\":1,\"content\":{\"json\":\"## IONIX Action Items\"},\"name\":\"text - 2\"},{\"type\":12,\"content\":{\"version\":\"NotebookGroup/1.0\",\"groupType\":\"editable\",\"title\":\"Current Open Action Items\",\"expandable\":true,\"expanded\":true,\"items\":[{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let lookbackTime = 14d;\\nlet bucketTimeSpan = 1h;\\nlet maxTimeGeneratedBucket = toscalar(IONIXActionItems_CL | where TimeGenerated > ago(lookbackTime)| summarize max(bin(TimeGenerated, bucketTimeSpan)));\\nIONIXActionItems_CL\\n | where TimeGenerated > ago(lookbackTime) and is_open_b == true\\n | extend TimeGeneratedBucket = bin(TimeGenerated, bucketTimeSpan)\\n | where TimeGeneratedBucket == maxTimeGeneratedBucket\\n | summarize count() by Category\\n | render barchart\\n\\n\",\"size\":0,\"title\":\"Action Items by Category\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"name\":\"action-items-by-category\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let lookbackTime = 14d;\\nlet bucketTimeSpan = 1h;\\nlet maxTimeGeneratedBucket = toscalar(IONIXActionItems_CL | where TimeGenerated > ago(lookbackTime)| summarize max(bin(TimeGenerated, bucketTimeSpan)));\\nIONIXActionItems_CL\\n | where TimeGenerated > ago(lookbackTime) and is_open_b == true\\n | extend TimeGeneratedBucket = bin(TimeGenerated, bucketTimeSpan)\\n | where TimeGeneratedBucket == maxTimeGeneratedBucket\\n | summarize count() by solution_s\\n | render piechart\",\"size\":0,\"title\":\"Most Common Solutions\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"customWidth\":\"50\",\"name\":\"most-common-solution\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let lookbackTime = 14d;\\nlet bucketTimeSpan = 1h;\\nlet maxTimeGeneratedBucket = toscalar(IONIXActionItems_CL | where TimeGenerated > ago(lookbackTime)| summarize max(bin(TimeGenerated, bucketTimeSpan)));\\nIONIXActionItems_CL\\n | where TimeGenerated > ago(lookbackTime) and is_open_b == true\\n | extend TimeGeneratedBucket = bin(TimeGenerated, bucketTimeSpan)\\n | where TimeGeneratedBucket == maxTimeGeneratedBucket\\n | extend Urgency = bin(urgency_d, 1)\\n | summarize count() by Urgency\\n | join kind=rightouter (range Urgency from 1.0 to 10.0 step 1) on Urgency\\n | project Urgency = Urgency1, Count = iff(isnotempty(count_), count_, 0)\\n | sort by Urgency asc\\n | extend Urgency = tostring(Urgency)\\n | render barchart\\n\\n\",\"size\":0,\"title\":\"Action Items Count by Urgency\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"categoricalbar\",\"chartSettings\":{\"group\":\"\",\"createOtherGroup\":0,\"xSettings\":{\"numberFormatSettings\":{\"unit\":0,\"options\":{\"style\":\"decimal\",\"useGrouping\":true}}},\"ySettings\":{\"numberFormatSettings\":{\"unit\":0,\"options\":{\"style\":\"decimal\",\"useGrouping\":true}}}}},\"customWidth\":\"50\",\"name\":\"open-ai-urgency-bars\"}]},\"name\":\"current-ais\"},{\"type\":12,\"content\":{\"version\":\"NotebookGroup/1.0\",\"groupType\":\"editable\",\"title\":\"Historical Info\",\"expandable\":true,\"expanded\":true,\"items\":[{\"type\":9,\"content\":{\"version\":\"KqlParameterItem/1.0\",\"parameters\":[{\"id\":\"e8bb48b6-6706-48bd-b8a1-94de288bcb4c\",\"version\":\"KqlParameterItem/1.0\",\"name\":\"TimeRange\",\"type\":4,\"isRequired\":true,\"value\":{\"durationMs\":604800000},\"typeSettings\":{\"selectableValues\":[{\"durationMs\":1800000},{\"durationMs\":3600000},{\"durationMs\":14400000},{\"durationMs\":43200000},{\"durationMs\":86400000},{\"durationMs\":172800000},{\"durationMs\":259200000},{\"durationMs\":604800000},{\"durationMs\":1209600000},{\"durationMs\":2419200000},{\"durationMs\":2592000000},{\"durationMs\":5184000000},{\"durationMs\":7776000000}],\"allowCustom\":true},\"timeContext\":{\"durationMs\":86400000}}],\"style\":\"pills\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"name\":\"parameters - 1\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let lookbackTime = now(-{TimeRange:seconds}s);\\nlet bucketTimeSpan = 1h;\\nIONIXActionItems_CL\\n | where TimeGenerated > lookbackTime and is_open_b == true\\n | project id_s, TimeGenerated\\n | make-series count() default=long(null) on TimeGenerated from bin(lookbackTime, bucketTimeSpan) to now() step bucketTimeSpan\\n | extend open_action_items=series_fill_forward(count_, long(null))\\n | project TimeGenerated, open_action_items\\n | mv-expand TimeGenerated to typeof(datetime), open_action_items to typeof(int)\\n | where isnotnull(open_action_items)\\n | render timechart\",\"size\":0,\"aggregation\":5,\"title\":\"Open Action Items over time\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"name\":\"action-items-over-time\"}]},\"name\":\"historical-data\"}],\"fromTemplateId\":\"sentinel-IONIXOverviewWorkbook\",\"$schema\":\"https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json\"}\n",
+                "serializedData": "{\"version\":\"Notebook/1.0\",\"items\":[{\"type\":1,\"content\":{\"json\":\"## IONIX Action Items\"},\"name\":\"text - 2\"},{\"type\":12,\"content\":{\"version\":\"NotebookGroup/1.0\",\"groupType\":\"editable\",\"title\":\"Current Open Action Items\",\"expandable\":true,\"expanded\":true,\"items\":[{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let IONIXTables = union isfuzzy=true IONIXActionItems_CL, CyberpionActionItems_CL;\\nlet lookbackTime = 14d;\\nlet bucketTimeSpan = 1h;\\nlet maxTimeGeneratedBucket = toscalar(IONIXTables | where TimeGenerated > ago(lookbackTime)| summarize max(bin(TimeGenerated, bucketTimeSpan)));\\nIONIXTables\\n | where TimeGenerated > ago(lookbackTime) and is_open_b == true\\n | extend TimeGeneratedBucket = bin(TimeGenerated, bucketTimeSpan)\\n | where TimeGeneratedBucket == maxTimeGeneratedBucket\\n | summarize count() by Category\\n | render barchart\\n\\n\",\"size\":0,\"title\":\"Action Items by Category\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"name\":\"action-items-by-category\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let IONIXTables = union isfuzzy=true IONIXActionItems_CL, CyberpionActionItems_CL;\\nlet lookbackTime = 14d;\\nlet bucketTimeSpan = 1h;\\nlet maxTimeGeneratedBucket = toscalar(IONIXTables | where TimeGenerated > ago(lookbackTime)| summarize max(bin(TimeGenerated, bucketTimeSpan)));\\nIONIXTables\\n | where TimeGenerated > ago(lookbackTime) and is_open_b == true\\n | extend TimeGeneratedBucket = bin(TimeGenerated, bucketTimeSpan)\\n | where TimeGeneratedBucket == maxTimeGeneratedBucket\\n | summarize count() by solution_s\\n | render piechart\",\"size\":0,\"title\":\"Most Common Solutions\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"customWidth\":\"50\",\"name\":\"most-common-solution\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let IONIXTables = union isfuzzy=true IONIXActionItems_CL, CyberpionActionItems_CL;\\nlet lookbackTime = 14d;\\nlet bucketTimeSpan = 1h;\\nlet maxTimeGeneratedBucket = toscalar(IONIXTables | where TimeGenerated > ago(lookbackTime)| summarize max(bin(TimeGenerated, bucketTimeSpan)));\\nIONIXTables\\n | where TimeGenerated > ago(lookbackTime) and is_open_b == true\\n | extend TimeGeneratedBucket = bin(TimeGenerated, bucketTimeSpan)\\n | where TimeGeneratedBucket == maxTimeGeneratedBucket\\n | extend Urgency = bin(urgency_d, 1)\\n | summarize count() by Urgency\\n | join kind=rightouter (range Urgency from 1.0 to 10.0 step 1) on Urgency\\n | project Urgency = Urgency1, Count = iff(isnotempty(count_), count_, 0)\\n | sort by Urgency asc\\n | extend Urgency = tostring(Urgency)\\n | render barchart\\n\\n\",\"size\":0,\"title\":\"Action Items Count by Urgency\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"visualization\":\"categoricalbar\",\"chartSettings\":{\"group\":\"\",\"createOtherGroup\":0,\"xSettings\":{\"numberFormatSettings\":{\"unit\":0,\"options\":{\"style\":\"decimal\",\"useGrouping\":true}}},\"ySettings\":{\"numberFormatSettings\":{\"unit\":0,\"options\":{\"style\":\"decimal\",\"useGrouping\":true}}}}},\"customWidth\":\"50\",\"name\":\"open-ai-urgency-bars\"}]},\"name\":\"current-ais\"},{\"type\":12,\"content\":{\"version\":\"NotebookGroup/1.0\",\"groupType\":\"editable\",\"title\":\"Historical Info\",\"expandable\":true,\"expanded\":true,\"items\":[{\"type\":9,\"content\":{\"version\":\"KqlParameterItem/1.0\",\"parameters\":[{\"id\":\"e8bb48b6-6706-48bd-b8a1-94de288bcb4c\",\"version\":\"KqlParameterItem/1.0\",\"name\":\"TimeRange\",\"type\":4,\"isRequired\":true,\"value\":{\"durationMs\":604800000},\"typeSettings\":{\"selectableValues\":[{\"durationMs\":1800000},{\"durationMs\":3600000},{\"durationMs\":14400000},{\"durationMs\":43200000},{\"durationMs\":86400000},{\"durationMs\":172800000},{\"durationMs\":259200000},{\"durationMs\":604800000},{\"durationMs\":1209600000},{\"durationMs\":2419200000},{\"durationMs\":2592000000},{\"durationMs\":5184000000},{\"durationMs\":7776000000}],\"allowCustom\":true},\"timeContext\":{\"durationMs\":86400000}}],\"style\":\"pills\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"name\":\"parameters - 1\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"let IONIXTables = union isfuzzy=true IONIXActionItems_CL, CyberpionActionItems_CL;\\nlet lookbackTime = now(-{TimeRange:seconds}s);\\nlet bucketTimeSpan = 1h;\\nIONIXTables\\n | where TimeGenerated > lookbackTime and is_open_b == true\\n | project id_s, TimeGenerated\\n | make-series count() default=long(null) on TimeGenerated from bin(lookbackTime, bucketTimeSpan) to now() step bucketTimeSpan\\n | extend open_action_items=series_fill_forward(count_, long(null))\\n | project TimeGenerated, open_action_items\\n | mv-expand TimeGenerated to typeof(datetime), open_action_items to typeof(int)\\n | where isnotnull(open_action_items)\\n | render timechart\",\"size\":0,\"aggregation\":5,\"title\":\"Open Action Items over time\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"name\":\"action-items-over-time\"}]},\"name\":\"historical-data\"}],\"fromTemplateId\":\"sentinel-IONIXOverviewWorkbook\",\"$schema\":\"https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json\"}\n",
                 "version": "1.0",
                 "sourceId": "[variables('workspaceResourceId')]",
                 "category": "sentinel"

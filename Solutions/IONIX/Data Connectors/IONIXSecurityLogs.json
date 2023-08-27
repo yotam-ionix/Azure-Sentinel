@@ -8,25 +8,34 @@
       "metricName": "Total data received",
       "legend": "IONIXActionItems_CL",
       "baseQuery": "IONIXActionItems_CL"
+    },
+    {
+      "metricName": "Total data received",
+      "legend": "CyberpionActionItems_CL",
+      "baseQuery": "CyberpionActionItems_CL"
     }
   ],
   "sampleQueries": [
     {
       "description": "Fetch latest Action Items that are currently open",
-      "query": "let lookbackTime = 14d;\nlet maxTimeGeneratedBucket = toscalar(\n   IONIXActionItems_CL \n   | where TimeGenerated > ago(lookbackTime)\n   | summarize max(bin(TimeGenerated, 1h))\n   );\nIONIXActionItems_CL\n | where TimeGenerated > ago(lookbackTime) and is_open_b == true\n | where bin(TimeGenerated, 1h) == maxTimeGeneratedBucket\n "
+      "query": "let IONIXTables = union isfuzzy=true IONIXActionItems_CL, CyberpionActionItems_CL;\nlet lookbackTime = 14d;\nlet maxTimeGeneratedBucket = toscalar(\n    IONIXTables\n    | where TimeGenerated > ago(lookbackTime)\n    | summarize max(bin(TimeGenerated, 1h))\n    );\nIONIXTables\n| where TimeGenerated > ago(lookbackTime) and is_open_b == true\n| where bin(TimeGenerated, 1h) == maxTimeGeneratedBucket\n"
     }
   ],
   "dataTypes": [
     {
       "name": "IONIXActionItems_CL",
       "lastDataReceivedQuery": "IONIXActionItems_CL\n            | summarize Time = max(TimeGenerated)\n            | where isnotempty(Time)"
+    },
+    {
+      "name": "CyberpionActionItems_CL",
+      "lastDataReceivedQuery": "CyberpionActionItems_CL\n            | summarize Time = max(TimeGenerated)\n            | where isnotempty(Time)"
     }
   ],
   "connectivityCriterias": [
     {
       "type": "IsConnectedQuery",
       "value": [
-        "IONIXActionItems_CL\n            | summarize LastLogReceived = max(TimeGenerated)\n            | project IsConnected = LastLogReceived > ago(30d)"
+        "union isfuzzy=true IONIXActionItems_CL, CyberpionActionItems_CL| summarize LastLogReceived = max(TimeGenerated)\n| project IsConnected = LastLogReceived > ago(30d)"
       ]
     }
   ],

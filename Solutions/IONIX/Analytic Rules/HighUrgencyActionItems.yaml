@@ -9,6 +9,7 @@ requiredDataConnectors:
   - connectorId: IONIXSecurityLogs
     dataTypes:
       - IONIXActionItems_CL
+      - CyberpionActionItems_CL
 queryFrequency: 1d
 queryPeriod: 14d
 triggerOperator: gt
@@ -19,15 +20,16 @@ relevantTechniques:
   - T1190
   - T1195
 query: |
+  let IONIXTables = union isfuzzy=true IONIXActionItems_CL, CyberpionActionItems_CL;
   let timeframe = 14d;
   let time_generated_bucket = 1h;
   let min_urgency = 9;
   let maxTimeGeneratedBucket = toscalar(
-     IONIXActionItems_CL
+     IONIXTables
      | where TimeGenerated > ago(timeframe)
      | summarize max(bin(TimeGenerated, time_generated_bucket))
      );
-  IONIXActionItems_CL
+  IONIXTables
    | where TimeGenerated > ago(timeframe) and is_open_b == true
    | where bin(TimeGenerated, time_generated_bucket) == maxTimeGeneratedBucket
    | where urgency_d >= min_urgency
