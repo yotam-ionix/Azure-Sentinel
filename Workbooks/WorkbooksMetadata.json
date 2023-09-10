@@ -2244,8 +2244,8 @@
   },
   {
     "workbookKey": "CyberpionOverviewWorkbook",
-    "logoFileName": "cyberpion_logo.svg",
-    "description": "Use Cyberpion's Security Logs and this workbook, to get an overview of your online assets, gain insights into their current state, and find ways to better secure your ecosystem.",
+    "logoFileName": "ionix-logo.svg",
+    "description": "Use IONIX's Security Logs and this workbook, to get an overview of your online assets, gain insights into their current state, and find ways to better secure your ecosystem.",
     "dataTypesDependencies": [
       "CyberpionActionItems_CL"
     ],
@@ -2253,30 +2253,10 @@
       "CyberpionSecurityLogs"
     ],
     "previewImagesFileNames": [
-      "CyberpionActionItemsBlack.png",
-      "CyberpionActionItemsWhite.png"
-    ],
-    "version": "1.0.0",
-    "title": "Cyberpion Overview",
-    "templateRelativePath": "CyberpionOverviewWorkbook.json",
-    "subtitle": "",
-    "provider": "Cyberpion"
-  },
-  {
-    "workbookKey": "IONIXOverviewWorkbook",
-    "logoFileName": "ionix-logo.svg",
-    "description": "Use IONIX's Security Logs and this workbook, to get an overview of your online assets, gain insights into their current state, and find ways to better secure your ecosystem.",
-    "dataTypesDependencies": [
-      "IONIXActionItems_CL"
-    ],
-    "dataConnectorsDependencies": [
-      "IONIXSecurityLogs"
-    ],
-    "previewImagesFileNames": [
       "IONIXActionItemsBlack.png",
       "IONIXActionItemsWhite.png"
     ],
-    "version": "1.0.0",
+    "version": "2.0.0",
     "title": "IONIX Overview",
     "templateRelativePath": "IONIXOverviewWorkbook.json",
     "subtitle": "",
