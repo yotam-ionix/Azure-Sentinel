@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "## Cyberpion Action Items"
+        "json": "## IONIX Action Items"
       },
       "name": "text - 2"
     },
@@ -180,6 +180,6 @@
     }
   ],
   "fallbackResourceIds": [],
-  "fromTemplateId": "sentinel-CyberpionOverviewWorkbook",
+  "fromTemplateId": "sentinel-IONIXOverviewWorkbook",
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
 }

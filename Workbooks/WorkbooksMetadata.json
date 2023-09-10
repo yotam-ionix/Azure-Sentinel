@@ -2263,6 +2263,26 @@
     "provider": "Cyberpion"
   },
   {
+    "workbookKey": "IONIXOverviewWorkbook",
+    "logoFileName": "ionix-logo.svg",
+    "description": "Use IONIX's Security Logs and this workbook, to get an overview of your online assets, gain insights into their current state, and find ways to better secure your ecosystem.",
+    "dataTypesDependencies": [
+      "IONIXActionItems_CL"
+    ],
+    "dataConnectorsDependencies": [
+      "IONIXSecurityLogs"
+    ],
+    "previewImagesFileNames": [
+      "IONIXActionItemsBlack.png",
+      "IONIXActionItemsWhite.png"
+    ],
+    "version": "1.0.0",
+    "title": "IONIX Overview",
+    "templateRelativePath": "IONIXOverviewWorkbook.json",
+    "subtitle": "",
+    "provider": "IONIX"
+  },
+  {
     "workbookKey": "SolarWindsPostCompromiseHuntingWorkbook",
     "logoFileName": "MSTIC-Logo.svg",
     "description": "This hunting workbook is intended to help identify activity related to the Solorigate compromise and subsequent attacks discovered in December 2020",
